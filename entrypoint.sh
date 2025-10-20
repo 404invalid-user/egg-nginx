@@ -5,14 +5,12 @@ cd /home/container
 MODIFIED_STARTUP=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
-
-
-sleep 1;
+${MODIFIED_STARTUP}
 
 rm -rf /home/container/tmp/*; 
 
 echo "Starting PHP-FPM";
-/usr/sbin/php-fpm82 --fpm-config /home/container/php-fpm/php-fpm.conf --daemonize;
+/usr/sbin/php-fpm --fpm-config /home/container/php-fpm/php-fpm.conf --daemonize;
 
 echo "Starting Nginx";
 
@@ -20,4 +18,4 @@ echo "Starting Nginx";
 
 echo "Successfully started"; 
 
-${MODIFIED_STARTUP}
+
