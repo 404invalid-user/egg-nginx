@@ -6,7 +6,7 @@ COPY --from=composer:latest  /usr/bin/composer /usr/bin/composer
 RUN ln -s /usr/bin/php82 /usr/bin/php
 RUN ln -s /usr/sbin/php-fpm82 /usr/bin/php-fpm
 
-RUN useradd -m -d /home/container -s /bin/bash container
+RUN adduser -D -h /home/container container
 USER container
 ENV USER=container
 ENV HOME=/home/container
