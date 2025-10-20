@@ -5,7 +5,7 @@ on:
 
 jobs:
   push:
-    name: "egg-nginx:nginx8.2"
+    name: "egg-nginx:8.2"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,4 +34,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/404invalid-user/egg-nginx:nginx8.2∂
+            ghcr.io/404invalid-user/egg-nginx:8.2
