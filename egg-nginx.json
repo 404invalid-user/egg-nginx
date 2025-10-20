@@ -1,0 +1,54 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-10-20T13:55:16-04:00",
+    "name": "nginx",
+    "author": "invaliduser@bruvland.com",
+    "description": "nginx egg with php",
+    "features": null,
+    "docker_images": {
+        "PHP 8.2": " ghcr.io\/404invalid-user\/egg-nginx:8.2",
+        "PHP 8.3": " ghcr.io\/404invalid-user\/egg-nginx:8.3",
+        "PHP 8.4": " ghcr.io\/404invalid-user\/egg-nginx:8.4"
+    },
+    "file_denylist": [],
+    "startup": "if [[ ! -z ${COMPOSER_MODULES} ]];\r\n    then composer require ${COMPOSER_MODULES} --working-dir=\/home\/container\/html;\r\nfi;",
+    "config": {
+        "files": "{\r\n    \"nginx\/conf.d\/default.conf\": {\r\n        \"parser\": \"file\",\r\n        \"find\": {\r\n            \"    listen \": \"    listen {{server.build.default.port}};\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \"Successfully started\",\r\n    \"userInteraction\": []\r\n}",
+        "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs\/latest.log\"\r\n}",
+        "stop": "^C\\n"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\ncd \/mnt\/server\r\napk --update add git\r\n\r\n\r\n# Get current Docker image tag from Pterodactyl environment\r\nTAG=$(echo \"$IMAGE\" | awk -F: '{print $2}')\r\n\r\n# Fallback if no tag found\r\nif [ -z \"$TAG\" ]; then\r\n    TAG=\"8.2\"\r\nfi\r\n\r\necho \"Using PHP version: $TAG\"\r\n\r\n# Clone the corresponding branch from GitHub\r\ngit clone --branch \"$TAG\" --depth 1 https:\/\/github.com\/404invalid-user\/egg-nginx .\/temp\r\n\r\n\r\ncp -r .\/temp\/nginx \/mnt\/server\/\r\ncp -r .\/temp\/php-fpm \/mnt\/server\/\r\ncp -r .\/temp\/html \/mnt\/server\/\r\n\r\ncp -r .\/temp\/startup.sh \/mnt\/server\/startup.sh\r\nchmod +x \/mnt\/server\/startup.sh\r\n\r\nrm -rf .\/temp\r\nmkdir \/mnt\/server\/tmp\r\nmkdir \/mnt\/server\/logs\r\ntouch \/mnt\/server\/logs\/latest.log\r\n\r\nif [ \"${WORDPRESS}\" == \"false\" ] || [ \"${WORDPRESS}\" == \"0\" ]; then\r\necho -e \"Install complete\"\r\nfi\r\n\r\n\r\n#wordpress\r\nif [ \"${WORDPRESS}\" == \"true\" ] || [ \"${WORDPRESS}\" == \"1\" ]; then\r\n    echo -e \"Installing wordpress\"\r\n    cd \/mnt\/server\/html\r\n    wget http:\/\/wordpress.org\/latest.tar.gz\r\n    tar xzf latest.tar.gz\r\n   mv wordpress\/* .\r\n   rm -rf wordpress latest.tar.gz\r\n   echo -e \"Install complete\"\r\n   exit 0\r\n   \r\n   fi",
+            "container": "alpine:latest",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Wordpress",
+            "description": "Enable auto installing Wordpress",
+            "env_variable": "WORDPRESS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Composer modules",
+            "description": "the composer modules you want to install",
+            "env_variable": "COMPOSER_MODULES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        }
+    ]
+}
