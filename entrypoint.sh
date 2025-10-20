@@ -2,10 +2,10 @@
 sleep 1
 cd /home/container
 
-MODIFIED_STARTUP=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
+MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
-${MODIFIED_STARTUP}
+eval ${MODIFIED_STARTUP}
 
 rm -rf /home/container/tmp/*; 
 
